@@ -29,31 +29,30 @@ def chk_mmss(x: str):
 def extract_video(input_path, output_path, start_time, end_time):
     # 動画情報の読み取り
     cap = cv2.VideoCapture(input_path)
-    fps = int(cap.get(cv2.CAP_PROP_FPS))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     # VideoWriter設定
     fmt = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter(output_path, fmt, fps, (width, height))
+    out = cv2.VideoWriter(output_path, fmt, 30, (width, height))
 
     # mm:ssをframeに変換
     if chk_mmss(start_time):
         start_time_second = mmss_to_seconds(start_time)
-        start_frame = int(start_time_second * fps)
+        start_frame = int(start_time_second * 30)
     else:
         logging.warning("`start_time` is not set.")
         start_frame = 0
 
     if chk_mmss(end_time):
         end_time_second = mmss_to_seconds(end_time)
-        end_frame = int(end_time_second * fps)
+        end_frame = int(end_time_second * 30)
     else:
         logging.warning("`end_time` is not set.")
         end_frame = frame_count
 
-    total_frames = end_frame - start_frame    
+    total_frames = end_frame - start_frame
     logging.info(f"clipping section: {start_time}-{end_time}.\
         Total frames: {total_frames}")
 
@@ -65,7 +64,7 @@ def extract_video(input_path, output_path, start_time, end_time):
 
         ret, frame = cap.read()
         if not ret:
-            break 
+            break
 
         out.write(frame.astype('uint8'))
 
